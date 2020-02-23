@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define ROW 100
+#define COL 100
+#define SPACE ' '
+#define SIZE 20
+// # ROW = # of PROC
+int main()
+{
+    int arr[ROW][COL],proc,totRow,AT=0,BT=0,S=0,E=0,BTContainer[SIZE],spaceCounter=0,PNContainer[SIZE],PNCounter=0,stackS=0,count=0,
+    WT=0,totalWT=0,countWT=0,
+    RT=0,totalRT=0,countRT=0,
+    TAT=0,totalTAT=0,countTAT=0;
+
+    float aveWT=0.00,aveRT=0.00,aveTAT=0.00;
+
+    printf("Enter number of processes: ");
+    scanf("%d",&proc);
+
+    if(proc<3)
+    {
+        printf("\nYou cannot enter under 3 processes.");
+    }
+    else
+    {
+        totRow = proc;
+        for(int rowCounter = 0; rowCounter < totRow; rowCounter++)
+        {
+            printf("\n");
+            for(int colCounter = 0; colCounter < 3; colCounter++)
+            {
+
+                if(colCounter == 0)
+                {
+                    printf("Process Number: ");
+                    scanf("%d",&arr[rowCounter][colCounter]);
+                    //printf("[%d][%d] \n",rowCounter,colCounter); //FOR LOCATING THE CURRENT INDEX
+                }
+                if(colCounter == 1)
+                {
+                    printf("Arrival Time: ");
+                    scanf("%d",&arr[rowCounter][colCounter]);
+                    //printf("[%d][%d] \n",rowCounter,colCounter); //FOR LOCATING THE CURRENT INDEX
+                }
+                if(colCounter == 2)
+                {
+                    printf("Burst Time: ");
+                    scanf("%d",&arr[rowCounter][colCounter]);
+                    //printf("[%d][%d] \n",rowCounter,colCounter); //FOR LOCATING THE CURRENT INDEX
+                }
+            }
+        }
+        display();
+
+        for(int rowCounter = 0; rowCounter < totRow; rowCounter++)
+        {
+            printf("\n");
+            for(int colCounter = 0; colCounter < 8; colCounter++)
+            {
+                if(colCounter == 0) ///PN
+                {
+                    printf("%d",arr[rowCounter][colCounter]);
+                    PNContainer[PNCounter] = arr[rowCounter][colCounter];
+                    PNCounter++;
+                }
+                if(colCounter == 1) ///AT
+                {
+                    printf("\t%d",arr[rowCounter][colCounter]);
+                    AT = arr[rowCounter][colCounter];
+                }
+                if(colCounter == 2) ///BT
+                {
+                    BT = arr[rowCounter][colCounter];
+                    printf("\t%d",BT);
+                    BT = arr[rowCounter][colCounter];
+                    BTContainer[spaceCounter] = arr[rowCounter][colCounter];
+                    spaceCounter++;
+
+                }
+                if(colCounter == 3) ///S
+                {
+                    printf("\t%d",S);
+                    stackS = S;
+                    S+= BT;
+                }
+                if(colCounter == 4) ///E  =  S + BT
+                {
+                    E = stackS + BT;
+                    printf("\t%d",E);
+                }
+                if(colCounter == 5) ///WT
+                {
+                    WT = stackS - AT;
+                    printf("\t%d",WT);
+                    totalWT += WT;
+                    countWT++;
+                    aveWT = totalWT / countWT;
+                }
+                if(colCounter == 6) ///RT
+                {
+                    RT = stackS - AT;
+                    printf("\t%d",RT);
+                    totalRT += RT;
+                    countRT++;
+                    aveRT = totalRT / countRT;
+                }
+                if(colCounter == 7) ///TAT
+                {
+                    TAT = E - AT;
+                    printf("\t%d",TAT);
+                    totalTAT += TAT;
+                    countTAT++;
+                    aveTAT = totalTAT / countTAT;
+                }
+            }
+        }
+    }
+    printf("\nAve:\t\t\t\t\t%.2f\t%.2f\t%.2f",aveWT,aveRT,aveTAT);
+    printf("\nGANTT CHART\n\t");
+    for(int divCounter = 0; divCounter < proc+1; divCounter++)
+    {
+        printf("|");
+        for(int lengthCounter = 0; lengthCounter < BTContainer[divCounter]; lengthCounter++)
+        {
+            if(lengthCounter == BTContainer[divCounter]/2)
+            {
+                printf("P%d",PNContainer[divCounter]); //Displays the Process Number in the Chart
+            }
+            else
+            {
+                printf("%c",SPACE); //Displays the Space
+            }
+        }
+    }
+    printf("\n\t");
+    for(int divCounter = 0; divCounter < proc; divCounter++)
+    {
+        printf("%d",count);
+        count += BTContainer[divCounter];
+        for(int lengthCounter = 0; lengthCounter < BTContainer[divCounter]; lengthCounter++)
+        {
+            if(lengthCounter == BTContainer[divCounter]/2)
+            {
+                printf("P%d",PNContainer[divCounter]); //Displays the Process Number in the Chart
+            }
+            else
+            {
+                printf("%c",SPACE); //Displays the Space
+            }
+        }
+    }
+    return 0;
+}
+
+void display()
+{
+    printf("\n\tAT\tBT\tS\tE\tWT\tRT\tTAT");
+}
